@@ -66,4 +66,7 @@ struct Constants {
 		static let Skip = "skip"
 		static let Order = "order"
 	}
+	struct ErrorDomain {
+		static let VirtualTourist = "VirtualTouristErrorDomain"
+	}
 }

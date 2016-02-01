@@ -17,7 +17,7 @@ extension UIViewController {
 	}
 }
 
-class LoginViewController: UIViewController, UITextFieldDelegate {
+class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderDelegate {
 	
 	@IBOutlet weak var scrollView: UIScrollView!
 	@IBOutlet weak var contentView: UIView!
@@ -29,7 +29,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 	
 	// variable to keep track of active text fields
 	weak var activeField = UITextField()
-	
 	var client = HTTPClient()
 	var currentUser = UserInformation()
 
@@ -58,65 +57,43 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 
 	// MARK: - Actions
 	@IBAction func loginButtonAction(sender: AnyObject) {
-		attemptLogin()
+		//attemptLogin()
+		
+		activityIndicator.startAnimating()
+		let loginUser = LoginUser(email: emailTextField.text, password: passwordTextField.text)
+		let provider = LoginProvider.Email(loginUser)
+		provider.login(delegate: self)
 	}
 
 	@IBAction func signUpButtonAction(sender: AnyObject) {
 		openUdacitySignUpPage()
 	}
 
-	// MARK: - Methods
-	
-	func attemptLogin() {
-		guard
-			let email = emailTextField.text where email != "",
-			let password = passwordTextField.text where password != "" else {
-				showAlert("Please provide User credentials"); return
-		}
-		activityIndicator.startAnimating()
-		client.sendAuthentictionRequest(email, password: password) { data, error in
-			guard let userId = data else {
-				Queue.Main.execute { self.activityIndicator.stopAnimating() }
-				self.showAlert(error!); return
-			}
-			defer {
-				Queue.Main.execute {
-					self.activityIndicator.stopAnimating()
-					self.currentUser.userId = userId as! String
-					self.completeLogin()
-				}
-			}
-		}
+
+	// MARK: - Login Provider Delegate
+	func loginProvider(loginProvider: LoginProvider, didSucceed: UserInformation) {
+		activityIndicator.stopAnimating()
+		currentUser = didSucceed
+		showMapViewController()
 	}
 	
-	func completeLogin() {
-		activityIndicator.startAnimating()
-		client.getPublicUserData(currentUser.userId) {data, error in
-			guard let user = data else {
-				Queue.Main.execute { self.activityIndicator.stopAnimating() }
-				self.showAlert(error!); return
-			}
-			defer {
-				Queue.Main.execute {
-					self.activityIndicator.stopAnimating()
-					self.currentUser.firstName = user["first_name"] as! String
-					self.currentUser.lastName = user["last_name"] as! String
-					self.showMapViewController()
-				}
-			}
-		}
+	func loginProvider(loginProvider: LoginProvider, didError error: NSError) {
+		activityIndicator.stopAnimating()
+		self.showAlert(error.localizedDescription, title: "Error")
 	}
 	
+	// MARK: View Helpers
 	func showMapViewController() {
 		let controller = storyboard!.instantiateViewControllerWithIdentifier(String(MapViewController)) as! MapViewController
 		controller.currentUser = currentUser
-		presentViewController(controller, animated: true, completion: nil)
+		showViewController(controller, sender: self)
 	}
 	
 	func openUdacitySignUpPage() {
 		UIApplication.sharedApplication().openURL(NSURL(string: Constants.URL.UdacitySignUpURL)!)
 	}
 	
+	// MARK: - Keyboard Helpers
 	func subscribeToKeyboardNotifications() {
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
 		NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
@@ -151,6 +128,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 		return keyboardSize.CGRectValue().height
 	}
 
+	// MARK: - Configure Login Screen
 	func centerContentView() {
 		let scrollViewBounds = scrollView.bounds
 		let contentViewBounds = contentView.bounds
@@ -166,7 +144,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 		scrollView.contentInset = scrollViewInsets
 	}
 	
-	//MARK: - Text Field Delegate
+	// MARK: - Text Field Delegate
 	func textFieldDidBeginEditing(textField: UITextField) {
 		activeField = textField
 	}
