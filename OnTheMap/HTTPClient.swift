@@ -65,6 +65,7 @@ extension HTTPClient {
 	
 	func sendRequest(request: (data: NSURLRequest, api: String), handler: CompletionHandler) {
 		let task = session.dataTaskWithRequest(request.data) { data, response, error in
+			print(response)
 			guard let data = data
 				else {
 					guard let error = error

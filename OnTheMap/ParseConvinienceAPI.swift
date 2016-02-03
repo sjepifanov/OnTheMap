@@ -28,11 +28,11 @@ extension HTTPClient {
 		}
 	}
 	
-	func postStudentInformation(httpBody: [String : String], handler: CompletionHandler) {
+	func postStudentInformation(httpBody: [String : AnyObject], handler: (() throws -> String) -> Void) {
 		sendRequest(ParseHTTP.POST(httpBody).request) { response in
 			do {
 				let result = try response()
-				guard let objectId = result.valueForKey("objectId")
+				guard let objectId = result.valueForKey("objectId") as? String
 					else {
 						let description = "Post failed."
 						let failureReason = "Error parsing data."
@@ -41,7 +41,7 @@ extension HTTPClient {
 				}
 				handler { return objectId }
 			} catch let error as NSError {
-				handler { return error }
+				handler { throw error }
 			}
 		}
 	}
@@ -66,7 +66,7 @@ extension HTTPClient {
 
 	private enum ParseHTTP {
 		case GET([String : String])
-		case POST([String : String])
+		case POST([String : AnyObject])
 		case PUT(String, [String : String])
 		
 		var request: (data: NSURLRequest, api: String) {

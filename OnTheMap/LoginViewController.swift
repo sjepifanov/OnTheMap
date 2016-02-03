@@ -79,17 +79,27 @@ class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderD
 		activityIndicator.stopAnimating()
 		self.showAlert(error.localizedDescription, title: "Error")
 	}
-	
+	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+		if segue.identifier == "ToTabBarController" {
+			let vc = segue.destinationViewController as! UITabBarController
+			print("segue to \(String(vc))")
+		}
+	}
 	// MARK: View Helpers
 	func showMapViewController(currentUser: UserInformation) {
-		let controller = storyboard!.instantiateViewControllerWithIdentifier(String(MapViewController)) as! MapViewController
-		controller.currentUser = currentUser
+		performSegueWithIdentifier("ToTabBarController", sender: self)
+		
+		
+		//let controller = storyboard!.instantiateViewControllerWithIdentifier(String(MapViewController)) as! MapViewController
+		//controller.currentUser = currentUser
+		//let myTabBarController = storyboard!.instantiateViewControllerWithIdentifier("TabBarController") as! UITabBarController
+		//DataProvider.Data.currentUser = currentUser
 		//let myNavController = storyboard!.instantiateViewControllerWithIdentifier("MapViewNavigationController") as! UINavigationController
-		//showViewController(myNavController, sender: controller)
-		//MapViewNavigationController
-		let navController = UINavigationController(rootViewController: controller)
-		//navController.setToolbarHidden(false, animated: true)
-		showViewController(navController, sender: self)
+		//myNavController.showViewController(myTabBarController, sender: self)
+		//myNavController.showViewController(controller, sender: self)
+		//myNavController.hidesBottomBarWhenPushed = false
+		//showViewController(myNavController, sender: self)
+		
 	}
 	
 	func openUdacitySignUpPage() {

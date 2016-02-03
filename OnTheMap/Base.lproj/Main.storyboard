@@ -57,9 +57,34 @@
                     <view key="view" contentMode="scaleToFill" id="QS5-Rx-YEW">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="8b0-OA-uH1">
+                                <rect key="frame" x="0.0" y="64" width="600" height="487"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="StudentInformationViewCell" id="NsE-Nn-154">
+                                        <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NsE-Nn-154" id="xvf-Lx-gSP">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Djb-ko-YwX" firstAttribute="top" secondItem="8b0-OA-uH1" secondAttribute="bottom" id="2sk-6C-Mho"/>
+                            <constraint firstItem="8b0-OA-uH1" firstAttribute="leading" secondItem="QS5-Rx-YEW" secondAttribute="leading" id="Hl6-oB-ENh"/>
+                            <constraint firstItem="8b0-OA-uH1" firstAttribute="top" secondItem="L7p-HK-0SC" secondAttribute="bottom" id="QkE-eo-4gO"/>
+                            <constraint firstAttribute="trailing" secondItem="8b0-OA-uH1" secondAttribute="trailing" id="q7s-vJ-RM3"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="On The Map" id="wUT-sG-fw7" userLabel="On The Map"/>
+                    <connections>
+                        <outlet property="tableView" destination="8b0-OA-uH1" id="as4-0U-TSF"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
             </objects>
@@ -183,6 +208,7 @@
                         <outlet property="passwordTextField" destination="Dkq-NM-mJw" id="Qkn-0e-Wj1"/>
                         <outlet property="scrollView" destination="ioU-na-ioV" id="lEO-3J-iaU"/>
                         <outlet property="signUpButton" destination="PSX-UR-jLM" id="hpS-KR-ZP6"/>
+                        <segue destination="49e-Tb-3d3" kind="presentation" identifier="ToTabBarController" id="jvp-VK-vTU"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="MAo-PR-zkB" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -231,6 +257,9 @@
                                 </constraints>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <connections>
+                                    <outlet property="delegate" destination="eyI-ug-w64" id="9rO-7E-Lms"/>
+                                </connections>
                             </textView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="Yyj-p5-P43">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="150"/>
@@ -274,18 +303,25 @@ Where are you</string>
                                 </attributedString>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="nLV-xn-UhV">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Enter Address To Search" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="nLV-xn-UhV">
                                 <rect key="frame" x="0.0" y="150" width="600" height="370"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="16"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" enablesReturnKeyAutomatically="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="eyI-ug-w64" id="H4n-yj-3Ef"/>
+                                </connections>
                             </textView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dyf-Vp-PIk" userLabel="Translucent View">
                                 <rect key="frame" x="0.0" y="520" width="600" height="80"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8gN-KO-m2m">
                                         <rect key="frame" x="241" y="25" width="118" height="30"/>
+                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <state key="normal" title="Find On The Map"/>
+                                        <connections>
+                                            <action selector="findOnTheMapButtonAction:" destination="eyI-ug-w64" eventType="touchUpInside" id="w12-Az-EWJ"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -298,6 +334,9 @@ Where are you</string>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FlQ-OI-8M4">
                                 <rect key="frame" x="532" y="20" width="48" height="30"/>
                                 <state key="normal" title="Cancel"/>
+                                <connections>
+                                    <action selector="cancelButtonAction:" destination="eyI-ug-w64" eventType="touchUpInside" id="Xr6-Dg-8cV"/>
+                                </connections>
                             </button>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="sKK-Jy-XI8">
                                 <rect key="frame" x="282" y="281" width="37" height="37"/>
@@ -328,6 +367,16 @@ Where are you</string>
                             <constraint firstItem="nLV-xn-UhV" firstAttribute="leading" secondItem="LdZ-yq-rL4" secondAttribute="leading" id="zQB-jW-2kK"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="activityIndicator" destination="sKK-Jy-XI8" id="HEY-lL-RFW"/>
+                        <outlet property="cancelButton" destination="FlQ-OI-8M4" id="5Si-sq-yiX"/>
+                        <outlet property="findOnTheMapButton" destination="8gN-KO-m2m" id="cAx-OV-Kxc"/>
+                        <outlet property="headerLabel" destination="Yyj-p5-P43" id="kVv-E3-pnv"/>
+                        <outlet property="informationTextView" destination="nLV-xn-UhV" id="xHs-ri-Cm5"/>
+                        <outlet property="mapView" destination="2IB-ED-b64" id="AGW-4b-iMX"/>
+                        <outlet property="translucentView" destination="dyf-Vp-PIk" id="2ci-PT-i9J"/>
+                        <outlet property="webLinkTextView" destination="pZs-gd-muQ" id="xDp-Bg-f8i"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GPA-gl-lUr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

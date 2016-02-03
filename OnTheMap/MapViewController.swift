@@ -15,8 +15,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 	@IBOutlet weak var mapView: MKMapView!
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	
-	var currentUser = UserInformation()
-	var client = HTTPClient()
+	//lazy var currentUser = UserInformation()
+	lazy var client = HTTPClient()
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -29,7 +29,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 		
 		mapView.delegate = self
 
-		showAlert("Hello, " + currentUser.firstName + " " + currentUser.lastName)
+		showAlert("Hello, " + DataProvider.Data.currentUser!.firstName + " " + DataProvider.Data.currentUser!.lastName)
 		mapView.alpha = 0.5
 		activityIndicator.startAnimating()
 		getLocationInformation()
@@ -60,7 +60,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 	// Call Information View controller
 	func pinBarButtonItemClicked() {
 		let controller = storyboard!.instantiateViewControllerWithIdentifier(String(PostViewController)) as! PostViewController
+		// controller.currentUser = currentUser
 		navigationController?.navigationBarHidden = true
+		navigationController?.toolbarHidden = true
 		showViewController(controller, sender: self)
 	}
 	
@@ -75,8 +77,10 @@ class MapViewController: UIViewController, MKMapViewDelegate {
 		Queue.UserInitiated.execute {
 			self.client.getStudentLocations(parameters) { response in
 				do {
-					let locations = try response()
+					let locations = try response() as [StudentInformation]
+					DataProvider.Data.studentInformation = locations
 					let annotations = self.createAnnotationsArray(locations)
+					DataProvider.Data.annotations = annotations
 					Queue.Main.execute {
 						self.activityIndicator.stopAnimating()
 						self.mapView.alpha = 1.0

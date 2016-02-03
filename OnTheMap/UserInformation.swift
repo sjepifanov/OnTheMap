@@ -55,11 +55,14 @@ enum LoginProvider {
 			Queue.UserInitiated.execute {
 				client.sendAuthentictionRequest(user) { response in
 					do {
-						let userId = try response()
+						let userId = try response() as String
 						client.getPublicUserData(userId) { response in
 							do {
-								let currentUser = try response()
-								Queue.Main.execute { delegate.loginProvider(self, didSucceed: currentUser) }
+								let currentUser = try response() as UserInformation
+								Queue.Main.execute {
+									DataProvider.Data.currentUser = currentUser
+									delegate.loginProvider(self, didSucceed: currentUser)
+								}
 							} catch let error as NSError {
 								Queue.Main.execute { delegate.loginProvider(self, didError: error) }
 							}
