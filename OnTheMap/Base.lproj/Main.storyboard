@@ -59,7 +59,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" id="wUT-sG-fw7"/>
+                    <navigationItem key="navigationItem" title="On The Map" id="wUT-sG-fw7" userLabel="On The Map"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Nw-L8-lE0" sceneMemberID="firstResponder"/>
             </objects>
@@ -211,7 +211,7 @@
         <!--Post View Controller-->
         <scene sceneID="Kxq-wv-yvI">
             <objects>
-                <viewController id="eyI-ug-w64" customClass="PostViewController" customModule="OnTheMap" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PostViewController" id="eyI-ug-w64" customClass="PostViewController" customModule="OnTheMap" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="wWM-Xg-i56"/>
                         <viewControllerLayoutGuide type="bottom" id="UwN-cU-n1n"/>
@@ -219,7 +219,114 @@
                     <view key="view" contentMode="scaleToFill" id="LdZ-yq-rL4">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="2IB-ED-b64">
+                                <rect key="frame" x="0.0" y="150" width="600" height="450"/>
+                            </mapView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Enter a Link to Share Here" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="pZs-gd-muQ" userLabel="Web Link Text View">
+                                <rect key="frame" x="0.0" y="50" width="600" height="100"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="sT1-5p-vY9"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="Yyj-p5-P43">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="150"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="150" id="Lb3-SD-x2a"/>
+                                </constraints>
+                                <attributedString key="attributedText">
+                                    <fragment>
+                                        <string key="content">
+Where are you</string>
+                                        <attributes>
+                                            <font key="NSFont" size="24" name="HelveticaNeue-Light"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content=" ">
+                                        <attributes>
+                                            <font key="NSFont" size="17" name="HelveticaNeue"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content="studying">
+                                        <attributes>
+                                            <font key="NSFont" size="24" name="HelveticaNeue-Bold"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content=" ">
+                                        <attributes>
+                                            <font key="NSFont" size="17" name="HelveticaNeue"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment content="today?">
+                                        <attributes>
+                                            <font key="NSFont" size="24" name="HelveticaNeue-Light"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="truncatingTail" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                        </attributes>
+                                    </fragment>
+                                </attributedString>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="nLV-xn-UhV">
+                                <rect key="frame" x="0.0" y="150" width="600" height="370"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="16"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" enablesReturnKeyAutomatically="YES"/>
+                            </textView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dyf-Vp-PIk" userLabel="Translucent View">
+                                <rect key="frame" x="0.0" y="520" width="600" height="80"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8gN-KO-m2m">
+                                        <rect key="frame" x="241" y="25" width="118" height="30"/>
+                                        <state key="normal" title="Find On The Map"/>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="80" id="B8q-Rw-ndS"/>
+                                    <constraint firstItem="8gN-KO-m2m" firstAttribute="centerY" secondItem="dyf-Vp-PIk" secondAttribute="centerY" id="az6-cT-gj2"/>
+                                    <constraint firstItem="8gN-KO-m2m" firstAttribute="centerX" secondItem="dyf-Vp-PIk" secondAttribute="centerX" id="tiD-ag-07S"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FlQ-OI-8M4">
+                                <rect key="frame" x="532" y="20" width="48" height="30"/>
+                                <state key="normal" title="Cancel"/>
+                            </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="sKK-Jy-XI8">
+                                <rect key="frame" x="282" y="281" width="37" height="37"/>
+                            </activityIndicatorView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="pZs-gd-muQ" secondAttribute="trailing" id="5Tb-7K-OFh"/>
+                            <constraint firstItem="Yyj-p5-P43" firstAttribute="leading" secondItem="LdZ-yq-rL4" secondAttribute="leading" id="Byl-hv-ABd"/>
+                            <constraint firstItem="dyf-Vp-PIk" firstAttribute="top" secondItem="nLV-xn-UhV" secondAttribute="bottom" id="DwB-Mq-PUH"/>
+                            <constraint firstAttribute="trailing" secondItem="nLV-xn-UhV" secondAttribute="trailing" id="GVy-xa-Ukd"/>
+                            <constraint firstItem="dyf-Vp-PIk" firstAttribute="leading" secondItem="LdZ-yq-rL4" secondAttribute="leading" id="HNj-H0-e8o"/>
+                            <constraint firstItem="Yyj-p5-P43" firstAttribute="top" secondItem="FlQ-OI-8M4" secondAttribute="bottom" constant="-50" id="QHc-m5-TMR"/>
+                            <constraint firstItem="2IB-ED-b64" firstAttribute="top" secondItem="Yyj-p5-P43" secondAttribute="bottom" id="QUg-5b-wyy"/>
+                            <constraint firstItem="UwN-cU-n1n" firstAttribute="top" secondItem="dyf-Vp-PIk" secondAttribute="bottom" id="Quk-sb-iXj"/>
+                            <constraint firstItem="Yyj-p5-P43" firstAttribute="top" secondItem="LdZ-yq-rL4" secondAttribute="top" id="Qul-l3-IgT"/>
+                            <constraint firstItem="nLV-xn-UhV" firstAttribute="top" secondItem="Yyj-p5-P43" secondAttribute="bottom" id="TCS-IN-V0M"/>
+                            <constraint firstAttribute="trailing" secondItem="dyf-Vp-PIk" secondAttribute="trailing" id="TCb-zn-4Rt"/>
+                            <constraint firstItem="UwN-cU-n1n" firstAttribute="top" secondItem="2IB-ED-b64" secondAttribute="bottom" id="VRV-d9-ETw"/>
+                            <constraint firstItem="pZs-gd-muQ" firstAttribute="leading" secondItem="LdZ-yq-rL4" secondAttribute="leading" id="ZbH-rQ-8Rr"/>
+                            <constraint firstItem="2IB-ED-b64" firstAttribute="top" secondItem="pZs-gd-muQ" secondAttribute="bottom" id="efM-nn-Bdg"/>
+                            <constraint firstItem="sKK-Jy-XI8" firstAttribute="centerY" secondItem="LdZ-yq-rL4" secondAttribute="centerY" id="gSQ-hH-x7J"/>
+                            <constraint firstItem="sKK-Jy-XI8" firstAttribute="centerX" secondItem="LdZ-yq-rL4" secondAttribute="centerX" id="kev-6n-mUW"/>
+                            <constraint firstAttribute="trailing" secondItem="Yyj-p5-P43" secondAttribute="trailing" id="qgf-3O-78y"/>
+                            <constraint firstItem="FlQ-OI-8M4" firstAttribute="leading" secondItem="Yyj-p5-P43" secondAttribute="trailing" constant="-68" id="sxK-5B-olp"/>
+                            <constraint firstItem="2IB-ED-b64" firstAttribute="leading" secondItem="LdZ-yq-rL4" secondAttribute="leading" id="xIL-PM-3pZ"/>
+                            <constraint firstAttribute="trailing" secondItem="2IB-ED-b64" secondAttribute="trailing" id="xm6-TQ-Czs"/>
+                            <constraint firstItem="nLV-xn-UhV" firstAttribute="leading" secondItem="LdZ-yq-rL4" secondAttribute="leading" id="zQB-jW-2kK"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GPA-gl-lUr" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -229,7 +336,7 @@
         <!--Navigation Controller-->
         <scene sceneID="7dr-3X-AgJ">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="T3y-u7-VIf" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="MapViewNavigationController" automaticallyAdjustsScrollViewInsets="NO" id="T3y-u7-VIf" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="" image="map" id="acW-dT-cKf"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ZT8-JV-Pfk">

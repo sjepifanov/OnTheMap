@@ -65,39 +65,41 @@ extension HTTPClient {
 	
 	func sendRequest(request: (data: NSURLRequest, api: String), handler: CompletionHandler) {
 		let task = session.dataTaskWithRequest(request.data) { data, response, error in
-			guard let data = data else {
-				guard let error = error else {
-					let description = "There is no data returned by request"
-					let failureReason = "No data received."
-					let error = WrapError.UserInfo(description: description, failureReason: failureReason, code: 100).wrappedNSError
-					handler({ throw error }); return
-				}
-				handler({ throw error }); return
+			guard let data = data
+				else {
+					guard let error = error
+						else {
+							let description = "There is no data returned by request"
+							let failureReason = "No data received."
+							let error = WrapError.UserInfo(description: description, failureReason: failureReason, code: 100).wrappedNSError
+							handler { throw error }; return
+					}
+					handler { throw error }; return
 			}
 			
 			switch request.api {
-			case String(UdacityHTTP):
+			case Constants.API.Udacity:
 				do {
 					let subData = data.subdataWithRange(NSMakeRange(5, data.length - 5)) /* subset response data! */
 					let parsedData = try NSJSONSerialization.JSONObjectWithData(subData, options: .AllowFragments)
-					handler({ return parsedData } )
+					handler { return parsedData }
 				} catch let error as NSError {
-					handler({ throw error })
+					handler { throw error }
 				}
 				
-			case String(ParseHTTP):
+			case Constants.API.Parse:
 				do {
 					let parsedData = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
-					handler({ return parsedData})
+					handler { return parsedData }
 				} catch let error as NSError {
-					handler({ throw error})
+					handler { throw error }
 				}
 				
 			default:
 				let description = "The request type is unknown."
 				let failureReason = "Unknown request."
 				let error = WrapError.UserInfo(description: description, failureReason: failureReason, code: 99).wrappedNSError
-				handler({ throw error })
+				handler { throw error }
 			}
 		}
 		task.resume()

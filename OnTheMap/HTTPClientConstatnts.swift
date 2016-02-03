@@ -18,6 +18,10 @@ struct Constants {
 		static let Parse = "QuWThTdiRmTux3YaDseUSEpUKo7aBYM737yKd4gY"
 		static let ParseAppId = "QrX47CA9cyuGewLdsL7o5Eb8iug6Em8ye0dnAbIr"
 	}
+	struct API {
+		static let Udacity = "UdacityHTTP"
+		static let Parse = "ParseHTTP"
+	}
 	struct Method {
 		static let Session = "session"
 		static let Users = "users"

@@ -6,8 +6,6 @@
 //  Copyright © 2016 Sergei. All rights reserved.
 //
 
-import Foundation
-
 // Taken from: http://nshipster.com/new-years-2016/
 // Credits to Luo Jie: https://github.com/beeth0ven
 

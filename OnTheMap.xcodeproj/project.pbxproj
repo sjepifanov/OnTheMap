@@ -17,6 +17,7 @@
 		851596B31C5B09D900AE47AC /* UdacityConvinienceAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851596B21C5B09D900AE47AC /* UdacityConvinienceAPI.swift */; };
 		851596B51C5B0A1000AE47AC /* ParseConvinienceAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851596B41C5B0A1000AE47AC /* ParseConvinienceAPI.swift */; };
 		851596B71C5B0A5A00AE47AC /* GCDConvinienceAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851596B61C5B0A5A00AE47AC /* GCDConvinienceAPI.swift */; };
+		85F94A791C6180AB0024851A /* MapViewConvinience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F94A781C6180AB0024851A /* MapViewConvinience.swift */; };
 		85FCBA221C5BED9300AC030B /* HTTPClientConstatnts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FCBA211C5BED9300AC030B /* HTTPClientConstatnts.swift */; };
 		85FCBA241C5BF64A00AC030B /* StudentInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FCBA231C5BF64A00AC030B /* StudentInformation.swift */; };
 		85FCBA261C5BFD6100AC030B /* UserInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FCBA251C5BFD6100AC030B /* UserInformation.swift */; };
@@ -38,6 +39,7 @@
 		851596B21C5B09D900AE47AC /* UdacityConvinienceAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UdacityConvinienceAPI.swift; sourceTree = "<group>"; };
 		851596B41C5B0A1000AE47AC /* ParseConvinienceAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParseConvinienceAPI.swift; sourceTree = "<group>"; };
 		851596B61C5B0A5A00AE47AC /* GCDConvinienceAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCDConvinienceAPI.swift; sourceTree = "<group>"; };
+		85F94A781C6180AB0024851A /* MapViewConvinience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewConvinience.swift; sourceTree = "<group>"; };
 		85FCBA211C5BED9300AC030B /* HTTPClientConstatnts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPClientConstatnts.swift; sourceTree = "<group>"; };
 		85FCBA231C5BF64A00AC030B /* StudentInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudentInformation.swift; sourceTree = "<group>"; };
 		85FCBA251C5BFD6100AC030B /* UserInformation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInformation.swift; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 				851596B41C5B0A1000AE47AC /* ParseConvinienceAPI.swift */,
 				85FCBA251C5BFD6100AC030B /* UserInformation.swift */,
 				85FCBA231C5BF64A00AC030B /* StudentInformation.swift */,
+				85F94A781C6180AB0024851A /* MapViewConvinience.swift */,
 				85FCBA211C5BED9300AC030B /* HTTPClientConstatnts.swift */,
 				851596B61C5B0A5A00AE47AC /* GCDConvinienceAPI.swift */,
 			);
@@ -206,6 +209,7 @@
 				851596B71C5B0A5A00AE47AC /* GCDConvinienceAPI.swift in Sources */,
 				851596B51C5B0A1000AE47AC /* ParseConvinienceAPI.swift in Sources */,
 				85FCBA261C5BFD6100AC030B /* UserInformation.swift in Sources */,
+				85F94A791C6180AB0024851A /* MapViewConvinience.swift in Sources */,
 				85FCBA221C5BED9300AC030B /* HTTPClientConstatnts.swift in Sources */,
 				85FCBA241C5BF64A00AC030B /* StudentInformation.swift in Sources */,
 				851596AE1C5B093F00AE47AC /* HTTPClient.swift in Sources */,

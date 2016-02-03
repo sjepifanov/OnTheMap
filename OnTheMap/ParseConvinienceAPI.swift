@@ -9,19 +9,21 @@
 import Foundation
 
 extension HTTPClient {
-	func getStudentLocations(parameters: [String : String], handler: CompletionHandler) {
+	func getStudentLocations(parameters: [String : String], handler: (() throws -> [StudentInformation]) -> Void) {
 		sendRequest(ParseHTTP.GET(parameters).request) { response in
 			do {
 				let result = try response()
-				guard let results = result.valueForKey("results") as? [[String : AnyObject]] else {
-					let description = "Student Location information not found."
-					let failureReason = "Error parsing data."
-					let error = WrapError.UserInfo(description: description, failureReason: failureReason, code: 202).wrappedNSError
-					handler({ throw error }); return
+				guard let locationsData = result.valueForKey("results") as? [[String : AnyObject]]
+					else {
+						let description = "Student Location information not found."
+						let failureReason = "Error parsing data."
+						let error = WrapError.UserInfo(description: description, failureReason: failureReason, code: 202).wrappedNSError
+						handler { throw error }; return
 				}
-				handler({ return results })
+				let studentInformation = StudentInformation.parseLocationsData(locationsData)
+				handler { return studentInformation }
 			} catch let error as NSError {
-				handler({ throw error })
+				handler { throw error }
 			}
 		}
 	}
@@ -30,15 +32,16 @@ extension HTTPClient {
 		sendRequest(ParseHTTP.POST(httpBody).request) { response in
 			do {
 				let result = try response()
-				guard let objectId = result.valueForKey("objectId") as? String else {
-					let description = "Post failed."
-					let failureReason = "Error parsing data."
-					let error = WrapError.UserInfo(description: description, failureReason: failureReason, code: 202).wrappedNSError
-					handler({ throw error }); return
+				guard let objectId = result.valueForKey("objectId")
+					else {
+						let description = "Post failed."
+						let failureReason = "Error parsing data."
+						let error = WrapError.UserInfo(description: description, failureReason: failureReason, code: 202).wrappedNSError
+						handler { throw error }; return
 				}
-				handler({ return objectId })
+				handler { return objectId }
 			} catch let error as NSError {
-				handler({ return error })
+				handler { return error }
 			}
 		}
 	}
@@ -47,20 +50,21 @@ extension HTTPClient {
 		sendRequest(ParseHTTP.PUT(objectId, httpBody).request) { response in
 			do {
 				let result = try response()
-				guard let updated = result.valueForKey("updatedAt") as? String else {
-					let description = "Update failed."
-					let failureReason = "Error parsing data."
-					let error = WrapError.UserInfo(description: description, failureReason: failureReason, code: 202).wrappedNSError
-					handler({ throw error }); return
+				guard let updated = result.valueForKey("updatedAt")
+					else {
+						let description = "Update failed."
+						let failureReason = "Error parsing data."
+						let error = WrapError.UserInfo(description: description, failureReason: failureReason, code: 202).wrappedNSError
+						handler { throw error }; return
 				}
-				handler({ return updated })
+				handler { return updated }
 			} catch let error as NSError {
-				handler({ throw error })
+				handler { throw error }
 			}
 		}
 	}
 
-	enum ParseHTTP {
+	private enum ParseHTTP {
 		case GET([String : String])
 		case POST([String : String])
 		case PUT(String, [String : String])
@@ -85,7 +89,7 @@ extension HTTPClient {
 				let request = NSMutableURLRequest(URL: NSURL(string: urlString)!)
 				request.addValue(Constants.APIKey.ParseAppId, forHTTPHeaderField: Constants.HTTPHeader.ParseAppId)
 				request.addValue(Constants.APIKey.Parse, forHTTPHeaderField: Constants.HTTPHeader.ParseApiKey)
-				return (request, String(ParseHTTP))
+				return (request, Constants.API.Parse)
 				
 			case .POST(let httpBody):
 				let urlString = Constants.URL.ParseBaseSecure
@@ -95,9 +99,9 @@ extension HTTPClient {
 				request.addValue(Constants.APIKey.Parse, forHTTPHeaderField: Constants.HTTPHeader.ParseApiKey)
 				request.addValue(Constants.HeaderValue.ApplicationJSON, forHTTPHeaderField: Constants.HTTPHeader.ContentType)
 				request.HTTPBody = try? NSJSONSerialization.dataWithJSONObject(httpBody, options: .PrettyPrinted)
-				return (request, String(ParseHTTP))
+				return (request, Constants.API.Parse)
 				
-			case .PUT(let objectId, let httpBody):
+			case let .PUT(objectId, httpBody):
 				// Required Parameters:
 				// objectId - (String) the object ID of the StudentLocation to update;
 				// specify the object ID right after StudentLocation in URL as seen below
@@ -109,7 +113,7 @@ extension HTTPClient {
 				request.addValue(Constants.APIKey.Parse, forHTTPHeaderField: Constants.HTTPHeader.ParseApiKey)
 				request.addValue(Constants.HeaderValue.ApplicationJSON, forHTTPHeaderField: Constants.HTTPHeader.ContentType)
 				request.HTTPBody = try? NSJSONSerialization.dataWithJSONObject(httpBody, options: .PrettyPrinted)
-				return (request, String(ParseHTTP))
+				return (request, Constants.API.Parse)
 			}
 		}
 		

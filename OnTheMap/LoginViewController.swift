@@ -29,8 +29,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderD
 	
 	// variable to keep track of active text fields
 	weak var activeField = UITextField()
-	var client = HTTPClient()
-	var currentUser = UserInformation()
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -53,28 +51,28 @@ class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderD
 	override func viewWillDisappear(animated: Bool) {
 		super.viewWillDisappear(animated)
 		unsubscribeFromKeyboardNotifications()
+		LoginProvider.Connect.delegate = nil
+		LoginProvider.Connect.client = nil
 	}
 
 	// MARK: - Actions
 	@IBAction func loginButtonAction(sender: AnyObject) {
-		//attemptLogin()
-		
 		activityIndicator.startAnimating()
+		LoginProvider.Connect.client = HTTPClient()
+		LoginProvider.Connect.delegate = self
 		let loginUser = LoginUser(email: emailTextField.text, password: passwordTextField.text)
 		let provider = LoginProvider.Email(loginUser)
-		provider.login(delegate: self)
+		provider.login()
 	}
 
 	@IBAction func signUpButtonAction(sender: AnyObject) {
 		openUdacitySignUpPage()
 	}
 
-
 	// MARK: - Login Provider Delegate
 	func loginProvider(loginProvider: LoginProvider, didSucceed: UserInformation) {
 		activityIndicator.stopAnimating()
-		currentUser = didSucceed
-		showMapViewController()
+		showMapViewController(didSucceed)
 	}
 	
 	func loginProvider(loginProvider: LoginProvider, didError error: NSError) {
@@ -83,10 +81,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderD
 	}
 	
 	// MARK: View Helpers
-	func showMapViewController() {
+	func showMapViewController(currentUser: UserInformation) {
 		let controller = storyboard!.instantiateViewControllerWithIdentifier(String(MapViewController)) as! MapViewController
 		controller.currentUser = currentUser
-		showViewController(controller, sender: self)
+		//let myNavController = storyboard!.instantiateViewControllerWithIdentifier("MapViewNavigationController") as! UINavigationController
+		//showViewController(myNavController, sender: controller)
+		//MapViewNavigationController
+		let navController = UINavigationController(rootViewController: controller)
+		//navController.setToolbarHidden(false, animated: true)
+		showViewController(navController, sender: self)
 	}
 	
 	func openUdacitySignUpPage() {
@@ -95,13 +98,23 @@ class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderD
 	
 	// MARK: - Keyboard Helpers
 	func subscribeToKeyboardNotifications() {
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self,
+			selector: "keyboardWillShow:",
+			name: UIKeyboardWillShowNotification,
+			object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self,
+			selector: "keyboardWillHide:",
+			name: UIKeyboardWillHideNotification,
+			object: nil)
 	}
 	
 	func unsubscribeFromKeyboardNotifications() {
-		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
-		NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+		NSNotificationCenter.defaultCenter().removeObserver(self,
+			name: UIKeyboardWillShowNotification,
+			object: nil)
+		NSNotificationCenter.defaultCenter().removeObserver(self,
+			name: UIKeyboardWillHideNotification,
+			object: nil)
 	}
 	
 	func keyboardWillShow(notification: NSNotification) {
