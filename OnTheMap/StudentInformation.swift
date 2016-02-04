@@ -18,6 +18,8 @@ struct StudentInformation {
 	let latitude: Double
 	let longitude: Double
 	
+	// Making an init private hence restricting initialization to internal method.
+	// During data parse making shure that every nil values are filtered.
 	private init (dictionary: [String : String]) {
 			firstName = dictionary[Constants.JSON.FirstName]!
 			lastName = dictionary[Constants.JSON.LastName]!
@@ -40,7 +42,9 @@ struct StudentInformation {
 				mapString = studentInformation[Constants.JSON.MapString] as? String,
 				latitude = studentInformation[Constants.JSON.Latitude] as? Double,
 				longitude = studentInformation[Constants.JSON.Longitude] as? Double
-				else { return [:] }
+				else {
+					return [:]
+			}
 			let parsedResult: [String : String] = [
 				Constants.JSON.FirstName : firstName,
 				Constants.JSON.LastName : lastName,

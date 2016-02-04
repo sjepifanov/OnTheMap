@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: Extension HTTPClient. Parse convinience.
+// Here we requesting and parsing the data
 extension HTTPClient {
 	func getStudentLocations(parameters: [String : String], handler: (() throws -> [StudentInformation]) -> Void) {
 		sendRequest(ParseHTTP.GET(parameters).request) { response in

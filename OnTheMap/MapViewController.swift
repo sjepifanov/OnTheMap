@@ -9,143 +9,115 @@
 import UIKit
 import MapKit
 
-
-class MapViewController: UIViewController, MKMapViewDelegate {
+class MapViewController: UIViewController, ShowAlertProtocol, DataProviderDelegate {
 	
 	@IBOutlet weak var mapView: MKMapView!
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	
-	//lazy var currentUser = UserInformation()
-	lazy var client = HTTPClient()
-	
+	// MARK: - View
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
-		let logoutButton = UIBarButtonItem(title: "Logout", style: .Plain, target: self, action: "logoutBarButtonItemClicked")
-		let pinBarButton = UIBarButtonItem(image: UIImage(named: "pin"), style: .Plain, target: self, action: "pinBarButtonItemClicked")
-		let refreshBarButton = UIBarButtonItem(barButtonSystemItem: .Refresh, target: self, action: "refreshBarButtonItemClicked")
-		self.navigationItem.leftBarButtonItem = logoutButton
-		self.navigationItem.rightBarButtonItems = [refreshBarButton, pinBarButton]
-		
+		configureNavigationItems()
 		mapView.delegate = self
-
-		showAlert("Hello, " + DataProvider.Data.currentUser!.firstName + " " + DataProvider.Data.currentUser!.lastName)
 		mapView.alpha = 0.5
 		activityIndicator.startAnimating()
-		getLocationInformation()
+		connectDataProvider()
+		DataProvider.UserData.getData()
+		DataProvider.Locations.getData()
 	}
 	
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 	}
 	
-	// MARK: - Actions
-	// Logout
-	func logoutBarButtonItemClicked() {
-		Queue.UserInitiated.execute {
-			self.client.endCurrentSession { response in
-				do {
-					let _ = try response()
-					Queue.Main.execute { self.dismissViewControllerAnimated(true, completion: nil) }
-				} catch let error as NSError {
-					Queue.Main.execute {
-						self.showAlert(error.localizedDescription)
-						self.dismissViewControllerAnimated(true, completion: nil)
-					}
-				}
-			}
-		}
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+		self.activityIndicator.stopAnimating()
+		self.mapView.alpha = 1.0
 	}
 	
+	// MARK: - Actions
 	// Call Information View controller
 	func pinBarButtonItemClicked() {
-		let controller = storyboard!.instantiateViewControllerWithIdentifier(String(PostViewController)) as! PostViewController
-		// controller.currentUser = currentUser
-		navigationController?.navigationBarHidden = true
-		navigationController?.toolbarHidden = true
-		showViewController(controller, sender: self)
+		showPostViewController()
 	}
 	
 	// Refresh map view data
 	func refreshBarButtonItemClicked() {
-		getLocationInformation()
+		connectDataProvider()
+		if let annotations = DataProvider.Data.annotations {
+			mapView.removeAnnotations(annotations)
+		}
+		activityIndicator.startAnimating()
+		mapView.alpha = 0.5
+		DataProvider.Locations.getData()
 	}
 	
-	// MARK: - Methods
-	func getLocationInformation() {
-		let parameters = ["limit" : "100", "order" : "-updatedAt"]
-		Queue.UserInitiated.execute {
-			self.client.getStudentLocations(parameters) { response in
-				do {
-					let locations = try response() as [StudentInformation]
-					DataProvider.Data.studentInformation = locations
-					let annotations = self.createAnnotationsArray(locations)
-					DataProvider.Data.annotations = annotations
-					Queue.Main.execute {
-						self.activityIndicator.stopAnimating()
-						self.mapView.alpha = 1.0
-						self.mapView.addAnnotations(annotations)
-					}
-				} catch let error as NSError {
-					Queue.Main.execute {
-						self.activityIndicator.stopAnimating()
-						self.mapView.alpha = 1.0
-						self.showAlert(error.localizedDescription)
-					}
-				}
-			}
+	// Logout
+	func logoutBarButtonItemClicked() {
+		DataProvider.EndSession.endSession()
+	}
+	
+	// MARK: - Data Provider Delegate
+	// Here we recieving responses from Data Provider and react accordingly
+	func dataProvider(dataProvider: DataProvider, gotUserData succeed: Bool) {
+		if let currentUser = DataProvider.Data.currentUser {
+			showAlert("Hello, " + currentUser.firstName + " " + currentUser.lastName)
 		}
 	}
 	
-	func createAnnotationsArray(studentsLocations: [StudentInformation]) -> [MKPointAnnotation] {
-		let annotations = studentsLocations.map { (location: StudentInformation) -> MKPointAnnotation in
-			let lat = CLLocationDegrees(location.latitude)
-			let long = CLLocationDegrees(location.longitude)
-			let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
-			let first = location.firstName
-			let last = location.lastName
-			let mediaURL = location.mediaURL
-			let annotation = MKPointAnnotation()
-			annotation.coordinate = coordinate
-			annotation.title = "\(first) \(last)"
-			annotation.subtitle = mediaURL
-			return annotation
-		}
-		return annotations
+	func dataProvider(dataProvider: DataProvider, gotAnnotations succeed: Bool) {
+		self.activityIndicator.stopAnimating()
+		self.mapView.alpha = 1.0
+		guard let annotations = DataProvider.Data.annotations else { return }
+		self.mapView.addAnnotations(annotations)
 	}
 	
-	// MARK: - Map View Delegate
-	
-	func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
-		// If the annotation is the user location, just return nil.
-		if annotation.isKindOfClass(MKUserLocation) { return nil }
-		// Try to dequeue an existing pin view first.
-		let reuseID = "pin"
-		var pinView = mapView.dequeueReusableAnnotationViewWithIdentifier(reuseID) as? MKPinAnnotationView
-		// If no pin view exist create a new one.
-		guard let pin = pinView else {
-			pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseID)
-			guard let pin = pinView else { return nil }
-			pin.pinTintColor = .redColor()
-			pin.animatesDrop = true
-			pin.canShowCallout = true
-			pin.rightCalloutAccessoryView = UIButton(type: .DetailDisclosure)
-			return pin
-		}
-		pin.annotation = annotation
-		return pin
+	func dataProvider(dataProvider: DataProvider, gotLocations: Bool) {
+		DataProvider.Annotations.getData()
 	}
 	
-	// This delegate method is implemented to respond to taps. It opens the system browser
-	// to the URL specified in the annotationViews subtitle property.
-	func mapView(mapView: MKMapView, annotationView: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-		if control == annotationView.rightCalloutAccessoryView {
-			guard let
-				subtitle = annotationView.annotation?.subtitle,
-				urlString = subtitle,
-				url = NSURL(string: (urlString))
-				else { return }
-			UIApplication.sharedApplication().openURL(url)
+	func dataProvider(dataProvider: DataProvider, didError error: NSError) {
+		self.activityIndicator.stopAnimating()
+		self.mapView.alpha = 1.0
+		showAlert(error.localizedDescription)
+	}
+	
+	func dataProvider(dataProvider: DataProvider, endSession succeed: Bool) {
+		if succeed {
+			dismissViewControllerAnimated(true, completion: nil)
+		} else {
+			showAlertAndDismissViewOnOkTap("Unable to End the Session.")
 		}
+	}
+	
+	// Unimplemented Delegates
+	func dataProvider(dataProvider: DataProvider, gotLocationFromAddress succeed: Bool) {}
+	func dataProvider(dataProvider: DataProvider, didSucceed succeed: Bool) {}
+	
+	// MARK: - Helpers
+	func connectDataProvider () {
+		DataProvider.Connect.client = HTTPClient()
+		DataProvider.Connect.delegate = self
+	}
+	
+	func disconnectDataProvider () {
+		DataProvider.Connect.client = nil
+		DataProvider.Connect.delegate = nil
+	}
+	
+	func configureNavigationItems() {
+		let logoutButton = UIBarButtonItem(title: "Logout", style: .Plain, target: self, action: "logoutBarButtonItemClicked")
+		let pinBarButton = UIBarButtonItem(image: UIImage(named: "pin"), style: .Plain, target: self, action: "pinBarButtonItemClicked")
+		let refreshBarButton = UIBarButtonItem(barButtonSystemItem: .Refresh, target: self, action: "refreshBarButtonItemClicked")
+		navigationItem.leftBarButtonItem = logoutButton
+		navigationItem.rightBarButtonItems = [refreshBarButton, pinBarButton]
+	}
+	
+	func showPostViewController() {
+		let controller = storyboard!.instantiateViewControllerWithIdentifier(String(PostViewController)) as! PostViewController
+		let navController = UINavigationController(rootViewController: controller)
+		navController.navigationBarHidden = true
+		showViewController(navController, sender: self)
 	}
 }

@@ -20,8 +20,8 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="spV-xz-37b">
                                 <rect key="frame" x="0.0" y="64" width="600" height="487"/>
                             </mapView>
-                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="vnM-Xd-reG">
-                                <rect key="frame" x="282" y="289" width="37" height="37"/>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="vnM-Xd-reG">
+                                <rect key="frame" x="290" y="297" width="20" height="20"/>
                             </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -58,12 +58,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="mDR-Ct-R7I">
+                                <rect key="frame" x="290" y="290" width="20" height="20"/>
+                            </activityIndicatorView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="8b0-OA-uH1">
                                 <rect key="frame" x="0.0" y="64" width="600" height="487"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="StudentInformationViewCell" id="NsE-Nn-154">
-                                        <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="28" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NsE-Nn-154" id="xvf-Lx-gSP">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
@@ -78,11 +81,14 @@
                             <constraint firstItem="Djb-ko-YwX" firstAttribute="top" secondItem="8b0-OA-uH1" secondAttribute="bottom" id="2sk-6C-Mho"/>
                             <constraint firstItem="8b0-OA-uH1" firstAttribute="leading" secondItem="QS5-Rx-YEW" secondAttribute="leading" id="Hl6-oB-ENh"/>
                             <constraint firstItem="8b0-OA-uH1" firstAttribute="top" secondItem="L7p-HK-0SC" secondAttribute="bottom" id="QkE-eo-4gO"/>
+                            <constraint firstItem="mDR-Ct-R7I" firstAttribute="centerY" secondItem="QS5-Rx-YEW" secondAttribute="centerY" id="lOD-Rc-mWr"/>
+                            <constraint firstItem="mDR-Ct-R7I" firstAttribute="centerX" secondItem="QS5-Rx-YEW" secondAttribute="centerX" id="q6l-pC-0gC"/>
                             <constraint firstAttribute="trailing" secondItem="8b0-OA-uH1" secondAttribute="trailing" id="q7s-vJ-RM3"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="On The Map" id="wUT-sG-fw7" userLabel="On The Map"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="mDR-Ct-R7I" id="HQD-Zd-GT2"/>
                         <outlet property="tableView" destination="8b0-OA-uH1" id="as4-0U-TSF"/>
                     </connections>
                 </viewController>
@@ -182,7 +188,6 @@
                                         </constraints>
                                     </view>
                                 </subviews>
-                                <color key="backgroundColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="g4x-O8-c6q" secondAttribute="bottom" id="M9w-GA-oRS"/>
                                     <constraint firstItem="g4x-O8-c6q" firstAttribute="leading" secondItem="ioU-na-ioV" secondAttribute="leading" id="NL9-N5-jOR"/>
@@ -191,7 +196,7 @@
                                 </constraints>
                             </scrollView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="g4x-O8-c6q" firstAttribute="width" secondItem="P9T-tq-1GW" secondAttribute="width" id="B4T-Lv-z6r"/>
                             <constraint firstItem="ioU-na-ioV" firstAttribute="top" secondItem="P9T-tq-1GW" secondAttribute="top" id="Hr0-wj-I4d"/>

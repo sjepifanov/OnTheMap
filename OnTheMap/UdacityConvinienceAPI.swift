@@ -53,7 +53,11 @@ extension HTTPClient {
 					let error = WrapError.UserInfo(description: description, failureReason: failureReason, code: 202).wrappedNSError
 					handler { throw error }; return
 				}
-				let currentUser = UserInformation(userId: userId, firstName: firstName, lastName: lastName)
+				let currentUser = UserInformation(userId: userId,
+					firstName: firstName,
+					lastName: lastName,
+					mapString: "",
+					mediaURL: "")
 				handler { return currentUser }
 			} catch let error as NSError {
 				handler { throw error }
@@ -79,6 +83,7 @@ extension HTTPClient {
 		}
 	}
 	
+	// Keep all request templates in enum. Provide with necessary data upon request.
 	private enum UdacityHTTP {
 		case GET(String)
 		case POST([String : [String : String]])

@@ -8,23 +8,17 @@
 
 import UIKit
 
-class InformationViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class InformationViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ShowAlertProtocol, DataProviderDelegate {
 	
 	@IBOutlet weak var tableView: UITableView!
+	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	
+	// MARK: - View
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
-		let logoutButton = UIBarButtonItem(title: "Logout", style: .Plain, target: self, action: "logoutBarButtonItemClicked")
-		let pinBarButton = UIBarButtonItem(image: UIImage(named: "pin"), style: .Plain, target: self, action: "pinBarButtonItemClicked")
-		let refreshBarButton = UIBarButtonItem(barButtonSystemItem: .Refresh, target: self, action: "refreshBarButtonItemClicked")
-		self.navigationItem.leftBarButtonItem = logoutButton
-		self.navigationItem.rightBarButtonItems = [refreshBarButton, pinBarButton]
-		
+		configureNavigationItems()
 		tableView.delegate = self
 		tableView.dataSource = self
-		tableView.reloadData()
-		
 	}
 	
 	override func viewWillAppear(animated: Bool) {
@@ -32,42 +26,32 @@ class InformationViewController: UIViewController, UITableViewDelegate, UITableV
 		tableView.reloadData()
 	}
 	
-	//lazy var studentLocations = [StudentInformation]()
-	lazy var client = HTTPClient()
-	//lazy var currentUser = UserInformation()
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+		self.activityIndicator.stopAnimating()
+	}
 	
 	// MARK: - Actions
-	// TODO: - Need a constructor for All Map/Table related calls.
+	// Call Post View controller
+	func pinBarButtonItemClicked() {
+		showPostViewController()
+	}
+	
+	// Refresh map view and get new set of data
+	func refreshBarButtonItemClicked() {
+		connectDataProvider()
+		DataProvider.Data.studentInformation = nil
+		tableView.reloadData()
+		activityIndicator.startAnimating()
+		DataProvider.Locations.getData()
+	}
+	
 	// Logout
 	func logoutBarButtonItemClicked() {
-		Queue.UserInitiated.execute {
-			self.client.endCurrentSession { response in
-				do {
-					let _ = try response()
-					Queue.Main.execute { self.dismissViewControllerAnimated(true, completion: nil) }
-				} catch let error as NSError {
-					Queue.Main.execute {
-						self.showAlert(error.localizedDescription)
-						self.dismissViewControllerAnimated(true, completion: nil)
-					}
-				}
-			}
-		}
+		DataProvider.EndSession.endSession()
 	}
 	
-	// Call Information View controller
-	func pinBarButtonItemClicked() {
-		let controller = storyboard!.instantiateViewControllerWithIdentifier(String(PostViewController)) as! PostViewController
-		// controller.currentUser = currentUser
-		navigationController?.navigationBarHidden = true
-		showViewController(controller, sender: self)
-	}
-	
-	// Refresh map view data
-	func refreshBarButtonItemClicked() {
-		//getLocationInformation()
-	}
-	
+	// MARK: - Table View Delegate
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return DataProvider.Data.studentInformation?.count ?? 0
 	}
@@ -83,12 +67,62 @@ class InformationViewController: UIViewController, UITableViewDelegate, UITableV
 	}
 	
 	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		let app = UIApplication.sharedApplication()
-		// TODO: Verify URL before opening
-		// TODO: Verify student info array. Should not contain nil values.
-		app.openURL(NSURL(string: (DataProvider.Data.studentInformation?[indexPath.row].mediaURL)!)!)
+		guard let
+			mediaUrl = DataProvider.Data.studentInformation?[indexPath.row].mediaURL,
+			url = NSURL(string: mediaUrl)
+		else { return }
+		UIApplication.sharedApplication().openURL(url)
 	}
 	
+	// MARK: - Data Provider Delegate
+	func dataProvider(dataProvider: DataProvider, gotLocations succeed: Bool) {
+		activityIndicator.stopAnimating()
+		tableView.reloadData()
+	}
 	
+	func dataProvider(dataProvider: DataProvider, didError error: NSError) {
+		activityIndicator.stopAnimating()
+		showAlert(error.localizedDescription)
+	}
+	
+	func dataProvider(dataProvider: DataProvider, endSession succeed: Bool) {
+		if succeed {
+			dismissViewControllerAnimated(true, completion: nil)
+		} else {
+			showAlertAndDismissViewOnOkTap("Unable to End the Session.")
+		}
+	}
+	
+	// Unimplemented Delegates
+	func dataProvider(dataProvider: DataProvider, didSucceed succeed: Bool) {}
+	func dataProvider(dataProvider: DataProvider, gotLocationFromAddress succeed: Bool) {}
+	func dataProvider(dataProvider: DataProvider, gotAnnotations succeed: Bool) {}
+	func dataProvider(dataProvider: DataProvider, gotUserData succeed: Bool) {}
+	
+	// MARK: - Helpers
+	func connectDataProvider () {
+		DataProvider.Connect.client = HTTPClient()
+		DataProvider.Connect.delegate = self
+	}
+	
+	func disconnectDataProvider () {
+		DataProvider.Connect.client = nil
+		DataProvider.Connect.delegate = nil
+	}
+	
+	func configureNavigationItems() {
+		let logoutButton = UIBarButtonItem(title: "Logout", style: .Plain, target: self, action: "logoutBarButtonItemClicked")
+		let pinBarButton = UIBarButtonItem(image: UIImage(named: "pin"), style: .Plain, target: self, action: "pinBarButtonItemClicked")
+		let refreshBarButton = UIBarButtonItem(barButtonSystemItem: .Refresh, target: self, action: "refreshBarButtonItemClicked")
+		self.navigationItem.leftBarButtonItem = logoutButton
+		self.navigationItem.rightBarButtonItems = [refreshBarButton, pinBarButton]
+		automaticallyAdjustsScrollViewInsets = false
+	}
+	
+	func showPostViewController() {
+		let controller = storyboard!.instantiateViewControllerWithIdentifier(String(PostViewController)) as! PostViewController
+		let navController = UINavigationController(rootViewController: controller)
+		navController.navigationBarHidden = true
+		showViewController(navController, sender: self)
+	}
 }
-

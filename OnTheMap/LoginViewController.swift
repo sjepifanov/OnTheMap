@@ -8,16 +8,33 @@
 
 import UIKit
 
-extension UIViewController {
+// Adding AlertController  with default implemantation as extension to UIViewController
+protocol ShowAlertProtocol {
+	func showAlert(message: String, title: String)
+}
+
+extension ShowAlertProtocol where Self: UIViewController {
 	func showAlert(message: String, title: String = "") {
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
 		let OKAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
 		alertController.addAction(OKAction)
-		Queue.Main.execute { self.presentViewController(alertController, animated: true, completion: nil) }
+		presentViewController(alertController, animated: true, completion: nil)
 	}
 }
 
-class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderDelegate {
+// Alert configured to dismiss view when Ok button is tapped
+extension ShowAlertProtocol where Self: UIViewController {
+	func showAlertAndDismissViewOnOkTap(message: String, title: String = "") {
+		let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+		let OKAction = UIAlertAction(title: "OK", style: .Default){ (OKAction) -> Void in
+			self.dismissViewControllerAnimated(true, completion: nil)
+		}
+		alertController.addAction(OKAction)
+		presentViewController(alertController, animated: true, completion: nil)
+	}
+}
+
+class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderDelegate, ShowAlertProtocol  {
 	
 	@IBOutlet weak var scrollView: UIScrollView!
 	@IBOutlet weak var contentView: UIView!
@@ -27,7 +44,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderD
 	@IBOutlet weak var signUpButton: UIButton!
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	
-	// variable to keep track of active text fields
+	// Variable to keep track of active text fields
 	weak var activeField = UITextField()
 
 	override func viewDidLoad() {
@@ -58,6 +75,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderD
 	// MARK: - Actions
 	@IBAction func loginButtonAction(sender: AnyObject) {
 		activityIndicator.startAnimating()
+		loginButton.enabled = false
 		LoginProvider.Connect.client = HTTPClient()
 		LoginProvider.Connect.delegate = self
 		let loginUser = LoginUser(email: emailTextField.text, password: passwordTextField.text)
@@ -70,36 +88,25 @@ class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderD
 	}
 
 	// MARK: - Login Provider Delegate
-	func loginProvider(loginProvider: LoginProvider, didSucceed: UserInformation) {
+	func loginProvider(loginProvider: LoginProvider, didSucceed: Bool) {
 		activityIndicator.stopAnimating()
-		showMapViewController(didSucceed)
+		loginButton.enabled = true
+		showMapViewController()
 	}
 	
 	func loginProvider(loginProvider: LoginProvider, didError error: NSError) {
 		activityIndicator.stopAnimating()
-		self.showAlert(error.localizedDescription, title: "Error")
+		loginButton.enabled = true
+		showAlert(error.localizedDescription)
 	}
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		if segue.identifier == "ToTabBarController" {
-			let vc = segue.destinationViewController as! UITabBarController
-			print("segue to \(String(vc))")
+			segue.destinationViewController as! UITabBarController
 		}
 	}
 	// MARK: View Helpers
-	func showMapViewController(currentUser: UserInformation) {
+	func showMapViewController() {
 		performSegueWithIdentifier("ToTabBarController", sender: self)
-		
-		
-		//let controller = storyboard!.instantiateViewControllerWithIdentifier(String(MapViewController)) as! MapViewController
-		//controller.currentUser = currentUser
-		//let myTabBarController = storyboard!.instantiateViewControllerWithIdentifier("TabBarController") as! UITabBarController
-		//DataProvider.Data.currentUser = currentUser
-		//let myNavController = storyboard!.instantiateViewControllerWithIdentifier("MapViewNavigationController") as! UINavigationController
-		//myNavController.showViewController(myTabBarController, sender: self)
-		//myNavController.showViewController(controller, sender: self)
-		//myNavController.hidesBottomBarWhenPushed = false
-		//showViewController(myNavController, sender: self)
-		
 	}
 	
 	func openUdacitySignUpPage() {

@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import MapKit
 
-class PostViewController: UIViewController, UITextViewDelegate {
+class PostViewController: UIViewController, UITextViewDelegate, ShowAlertProtocol, DataProviderDelegate {
 	
 	@IBOutlet weak var mapView: MKMapView!
 	@IBOutlet weak var webLinkTextView: UITextView!
@@ -21,16 +21,22 @@ class PostViewController: UIViewController, UITextViewDelegate {
 	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 	@IBOutlet weak var findOnTheMapButton: UIButton!
 	
-	//lazy var currentUser = UserInformation()
-	lazy var annotation = MKPointAnnotation()
-	lazy var client = HTTPClient()
-	var mapString: String?
-	
+	// MARK: - View
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		connectDataProvider()
 		findOnTheMapButton.layer.cornerRadius = 0.5
 	}
 	
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+	}
+	
+	override func viewWillDisappear(animated: Bool) {
+		super.viewWillDisappear(animated)
+	}
+	
+	// MARK: - Actions
 	@IBAction func findOnTheMapButtonAction(sender: AnyObject) {
 		if findOnTheMapButton.titleLabel?.text == "Find On The Map" { findOnTheMap() }
 		if findOnTheMapButton.titleLabel?.text == "Submit" { submitStudentInfo() }
@@ -40,82 +46,59 @@ class PostViewController: UIViewController, UITextViewDelegate {
 		dismissViewControllerAnimated(true, completion: nil)
 	}
 	
+	// MARK: - Methods
+	// Try to reverse geoCode provided address. If succeed return prepared Annotation
 	func findOnTheMap() {
 		if informationTextView.text == "" {
 			showAlert("Please provide location information"); return
 		}
 		activityIndicator.startAnimating()
-		// Verify Address and add annotation to map
-		geocodeAddress(informationTextView.text) { response in
-			do {
-				let annotation = try response()
-				self.annotation = annotation
-				self.mapString = self.informationTextView.text
-				// Prepare view
-				self.activityIndicator.stopAnimating()
-				self.headerLabel.hidden = true
-				self.informationTextView.hidden = true
-				self.findOnTheMapButton.setTitle("Submit", forState: .Normal)
-				self.translucentView.alpha = 0.6
-				// Zoom map
-				let center = annotation.coordinate
-				let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0))
-				self.mapView.setRegion(region, animated: true)
-			} catch let error as NSError {
-				self.activityIndicator.stopAnimating()
-				self.showAlert(error.localizedDescription)
-			}
-		}
-	}
-	
-	// Translate Address to GeoCode
-	func geocodeAddress(address: String, handler:(() throws -> MKPointAnnotation) -> Void) {
-		let geocoder = CLGeocoder()
-		geocoder.geocodeAddressString(address) { data, error in
-			guard let placeMarks = data
-				else {
-					handler { throw error! }; return
-			}
-			if placeMarks.count > 0 {
-				let placeMark = placeMarks[0]
-				guard let location = placeMark.location else { return }
-				let annotation = MKPointAnnotation()
-				annotation.coordinate = location.coordinate
-				annotation.title = "\(DataProvider.Data.currentUser!.firstName) \(DataProvider.Data.currentUser!.lastName)"
-				handler { return annotation }
-			}
+		DataProvider.AnnotationFromAddress(informationTextView.text).getData()
+		if let _ = DataProvider.Data.currentUser {
+			// Save mapString to currentUser
+			DataProvider.Data.currentUser?.mapString = informationTextView.text
 		}
 	}
 	
 	func submitStudentInfo() {
 		guard let _ = NSURL(string: webLinkTextView.text) else { showAlert("Invalid URL"); return }
 		activityIndicator.startAnimating()
-		let httpBody: [String : AnyObject] = [
-			Constants.JSON.UniqueKey :DataProvider.Data.currentUser!.userId,
-			Constants.JSON.FirstName : DataProvider.Data.currentUser!.firstName,
-			Constants.JSON.LastName : DataProvider.Data.currentUser!.lastName,
-			Constants.JSON.MapString : mapString!,
-			Constants.JSON.Longitude : annotation.coordinate.longitude,
-			Constants.JSON.Latitude : annotation.coordinate.latitude,
-			Constants.JSON.MediaURL : webLinkTextView.text
-		]
-		for (key, value) in httpBody {
-			print("key: \(key), value: \(value)")
+		if let _ = DataProvider.Data.currentUser {
+			// Save mediaURL to userInfo. Now we should have all the information to post.
+			DataProvider.Data.currentUser?.mediaURL = webLinkTextView.text
 		}
-		
-		client.postStudentInformation(httpBody) { response in
-			do {
-				let objectId = try response()
-				print(objectId)
-				self.activityIndicator.stopAnimating()
-				self.showAlert("Information Posted.")
-				self.dismissViewControllerAnimated(true, completion: nil)
-			} catch let error as NSError {
-				self.activityIndicator.stopAnimating()
-				self.showAlert(error.localizedDescription)
-			}
-		}
+		DataProvider.UserData.postData()
 	}
+	
+	// MARK: - DataProviderDelegate
+	func dataProvider(dataProvider: DataProvider, gotLocationFromAddress succeed: Bool) {
+		guard let annotation = DataProvider.Data.annotationFromAddress else { return }
+		// Prepare view
+		activityIndicator.stopAnimating()
+		headerLabel.hidden = true
+		informationTextView.hidden = true
+		findOnTheMapButton.setTitle("Submit", forState: .Normal)
+		translucentView.alpha = 0.6
+		// Zoom map
+		let center = annotation.coordinate
+		let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 1.0, longitudeDelta: 1.0))
+		mapView.setRegion(region, animated: true)
+	}
+	
+	func dataProvider(dataProvider: DataProvider, didSucceed succeed: Bool) {
+		activityIndicator.stopAnimating()
+		showAlertAndDismissViewOnOkTap("Information posted.")
+	}
+	
+	func dataProvider(dataProvider: DataProvider, didError error: NSError) {
+		activityIndicator.stopAnimating()
+		showAlert(error.localizedDescription)
+	}
+	
+	func dataProvider(dataProvider: DataProvider, endSession succeed: Bool) {}
+	func dataProvider(dataProvider: DataProvider, gotLocations succeed: Bool) {}
+	func dataProvider(dataProvider: DataProvider, gotAnnotations succeed: Bool) {}
+	func dataProvider(dataProvider: DataProvider, gotUserData succeed: Bool) {}
 	
 	// MARK: - Text View Delegate
 	func textViewDidBeginEditing(textView: UITextView) {
@@ -130,5 +113,15 @@ class PostViewController: UIViewController, UITextViewDelegate {
 		}
 		return true
 	}
+	
+	// MARK: - Helpers
+	func connectDataProvider () {
+		DataProvider.Connect.client = HTTPClient()
+		DataProvider.Connect.delegate = self
+	}
+	
+	func disconnectDataProvider () {
+		DataProvider.Connect.client = nil
+		DataProvider.Connect.delegate = nil
+	}
 }
-
