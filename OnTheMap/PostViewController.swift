@@ -25,7 +25,8 @@ class PostViewController: UIViewController, UITextViewDelegate, ShowAlertProtoco
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		connectDataProvider()
-		findOnTheMapButton.layer.cornerRadius = 0.5
+		findOnTheMapButton.layer.cornerRadius = 5
+		
 	}
 	
 	override func viewWillAppear(animated: Bool) {

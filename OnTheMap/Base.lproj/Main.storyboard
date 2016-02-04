@@ -256,7 +256,7 @@
                             </mapView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Enter a Link to Share Here" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="pZs-gd-muQ" userLabel="Web Link Text View">
                                 <rect key="frame" x="0.0" y="50" width="600" height="100"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="sT1-5p-vY9"/>
                                 </constraints>
@@ -268,7 +268,7 @@
                             </textView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" minimumFontSize="14" translatesAutoresizingMaskIntoConstraints="NO" id="Yyj-p5-P43">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="150"/>
-                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="150" id="Lb3-SD-x2a"/>
                                 </constraints>
@@ -310,7 +310,7 @@ Where are you</string>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Enter Address To Search" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="nLV-xn-UhV">
                                 <rect key="frame" x="0.0" y="150" width="600" height="370"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.49803921579999999" green="0.49803921579999999" blue="0.49803921579999999" alpha="1" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="16"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
@@ -322,18 +322,17 @@ Where are you</string>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8gN-KO-m2m">
                                         <rect key="frame" x="241" y="25" width="118" height="30"/>
-                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <state key="normal" title="Find On The Map"/>
                                         <connections>
                                             <action selector="findOnTheMapButtonAction:" destination="eyI-ug-w64" eventType="touchUpInside" id="w12-Az-EWJ"/>
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="B8q-Rw-ndS"/>
-                                    <constraint firstItem="8gN-KO-m2m" firstAttribute="centerY" secondItem="dyf-Vp-PIk" secondAttribute="centerY" id="az6-cT-gj2"/>
-                                    <constraint firstItem="8gN-KO-m2m" firstAttribute="centerX" secondItem="dyf-Vp-PIk" secondAttribute="centerX" id="tiD-ag-07S"/>
+                                    <constraint firstItem="8gN-KO-m2m" firstAttribute="centerY" secondItem="dyf-Vp-PIk" secondAttribute="centerY" id="IaH-JZ-1kp"/>
+                                    <constraint firstItem="8gN-KO-m2m" firstAttribute="centerX" secondItem="dyf-Vp-PIk" secondAttribute="centerX" id="VjP-bj-8Lw"/>
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FlQ-OI-8M4">
@@ -347,7 +346,7 @@ Where are you</string>
                                 <rect key="frame" x="282" y="281" width="37" height="37"/>
                             </activityIndicatorView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="pZs-gd-muQ" secondAttribute="trailing" id="5Tb-7K-OFh"/>
                             <constraint firstItem="Yyj-p5-P43" firstAttribute="leading" secondItem="LdZ-yq-rL4" secondAttribute="leading" id="Byl-hv-ABd"/>

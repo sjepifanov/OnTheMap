@@ -45,6 +45,10 @@ struct StudentInformation {
 				else {
 					return [:]
 			}
+			// Here we fighting with type system to allow filtering of empty elements
+			// Probably it's better to extend functionality instead of converting data
+			// In any case converting from Double to String and back is safe enought
+			// to allow such conversion. The resulting array is of correct type anyway.
 			let parsedResult: [String : String] = [
 				Constants.JSON.FirstName : firstName,
 				Constants.JSON.LastName : lastName,

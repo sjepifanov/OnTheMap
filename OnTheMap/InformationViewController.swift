@@ -48,6 +48,7 @@ class InformationViewController: UIViewController, UITableViewDelegate, UITableV
 	
 	// Logout
 	func logoutBarButtonItemClicked() {
+		connectDataProvider()
 		DataProvider.EndSession.endSession()
 	}
 	
@@ -75,6 +76,10 @@ class InformationViewController: UIViewController, UITableViewDelegate, UITableV
 	}
 	
 	// MARK: - Data Provider Delegate
+	// While delegate pattern works for cases with small amunt of outcomes,
+	// as soon as requirement grows delegates become very restricted.
+	// Probably better way is to suply results within a closure.
+	// though that lead to less friendly and less readable code.
 	func dataProvider(dataProvider: DataProvider, gotLocations succeed: Bool) {
 		activityIndicator.stopAnimating()
 		tableView.reloadData()

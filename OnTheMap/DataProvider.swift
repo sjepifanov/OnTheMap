@@ -29,6 +29,9 @@ extension DataProviderDelegate {
 }
 
 // MARK: - DataProvider enum with Data and Connect structs
+// Tried to stay away from Singleton pattern, and be as close as posble to allow Mockup tests
+// though that brings other problesm, as in tabBarController views are losing connection with delegate
+// when switching connections back and forth. Probably class would play better than struct in such scenario.
 enum DataProvider {
 	case UserData
 	case Locations
@@ -51,7 +54,9 @@ enum DataProvider {
 
 // MARK: - Data Provider Extension. getData() method
 extension DataProvider {
-	// Provide requested data according to enum cases.
+	// Provide requested data according to enum cases. The body of function grows
+	// with cases introduced to enum. While each case is small, the otheral structure
+	// feels prety heavy. Probably separate classes would play better for readability.
 	func getData() {
 		
 		guard let client = Connect.client, delegate = Connect.delegate else { return }
@@ -116,6 +121,7 @@ extension DataProvider {
 					}
 				}
 			}
+			
 		default:
 			let description = "Unknown request type."
 			let failureReason = "Unknown request type."
@@ -136,8 +142,8 @@ extension DataProvider {
 				currentUser = DataProvider.Data.currentUser,
 				annotation = DataProvider.Data.annotationFromAddress
 				else {
-					let description = "Failed to retreve User Data. Please tap Refresh button."
-					let failureReason = "No user data present."
+					let description = "Failed to retreve User Data."
+					let failureReason = "No user data found."
 					let error = WrapError.UserInfo(description: description, failureReason: failureReason, code: 290).wrappedNSError
 					delegate.dataProvider(self, didError: error); return
 			}
@@ -175,6 +181,7 @@ extension DataProvider {
 extension DataProvider {
 	func endSession() {
 		guard let client = Connect.client, delegate = Connect.delegate else { return }
+		
 		switch self {
 		case .EndSession:
 			Queue.UserInitiated.execute {
@@ -187,6 +194,7 @@ extension DataProvider {
 					}
 				}
 			}
+			
 		default:
 			let description = "Unknown request type."
 			let failureReason = "Unknown request type."
@@ -195,6 +203,7 @@ extension DataProvider {
 		}
 	}
 }
+
 // MARK: - Data Provider Extension. Private Helpers
 extension DataProvider {
 	// Create Annotations Array from User Locations
@@ -214,6 +223,7 @@ extension DataProvider {
 		}
 		return annotations
 	}
+	
 	// Translate Address to GeoCode and return Annotation
 	private func geocodeAddress(address: String, handler:(() throws -> MKPointAnnotation) -> Void) {
 		guard let currentUser = DataProvider.Data.currentUser
@@ -227,7 +237,11 @@ extension DataProvider {
 		geocoder.geocodeAddressString(address) { data, error in
 			guard let placeMarks = data
 				else {
-					handler { throw error! }; return
+					// The default error is non informative. Replacing with human readable error.
+					let description = "There is no known location by address provided."
+					let failureReason = "No location information for address provided"
+					let error = WrapError.UserInfo(description: description, failureReason: failureReason, code: 209).wrappedNSError
+					handler { throw error }; return
 			}
 			if placeMarks.count > 0 {
 				let placeMark = placeMarks[0]

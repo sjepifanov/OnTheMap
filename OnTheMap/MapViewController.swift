@@ -9,6 +9,11 @@
 import UIKit
 import MapKit
 
+// Decoupling ViewControllers from model as much as possible.
+// Introduced side effect with connectors assigned dynamically.
+// While switching views connectors are reinitialized
+// May lead to circumstances where controllers are not able to get data back
+// through Delegates
 class MapViewController: UIViewController, ShowAlertProtocol, DataProviderDelegate {
 	
 	@IBOutlet weak var mapView: MKMapView!
@@ -55,6 +60,8 @@ class MapViewController: UIViewController, ShowAlertProtocol, DataProviderDelega
 	
 	// Logout
 	func logoutBarButtonItemClicked() {
+		activityIndicator.startAnimating()
+		mapView.alpha = 0.5
 		DataProvider.EndSession.endSession()
 	}
 	
@@ -84,6 +91,8 @@ class MapViewController: UIViewController, ShowAlertProtocol, DataProviderDelega
 	}
 	
 	func dataProvider(dataProvider: DataProvider, endSession succeed: Bool) {
+		activityIndicator.stopAnimating()
+		mapView.alpha = 1.0
 		if succeed {
 			dismissViewControllerAnimated(true, completion: nil)
 		} else {

@@ -32,6 +32,8 @@ struct LoginUser {
 // Login provider with main login function will excute login path depending on chosen case
 enum LoginProvider {
 	case Email(LoginUser)
+	// Facebook left as a placeholder. Due to time constraits the functionality is nit emlemented
+	// though current patter will allows to infinite number of possible providers.
 	case Facebook
 	
 	struct Connect {

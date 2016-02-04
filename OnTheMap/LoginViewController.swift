@@ -33,7 +33,7 @@ extension ShowAlertProtocol where Self: UIViewController {
 		presentViewController(alertController, animated: true, completion: nil)
 	}
 }
-
+ 
 class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderDelegate, ShowAlertProtocol  {
 	
 	@IBOutlet weak var scrollView: UIScrollView!
@@ -50,8 +50,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderD
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		loginButton.layer.cornerRadius = 5
-		emailTextField.text = "sjepifanov@hotmail.com"
-		passwordTextField.text = "Mong2005!"
+		checkConnection()
 	}
 	
 	override func viewDidLayoutSubviews() {
@@ -156,6 +155,19 @@ class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderD
 		let userInfo = notification.userInfo
 		let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue // of CGRect
 		return keyboardSize.CGRectValue().height
+	}
+	
+	// Check Network connection.
+	func checkConnection() {
+		let connection = HTTPClient().networkConnectionType(Constants.URL.UdacityBaseSecure)
+		switch connection {
+		case .NONETWORK:
+			showAlert("No Internet connection. The functionality of the app will be limited")
+		case .MOBILE3GNETWORK:
+			showAlert("The app will download data from web services. Please switch to WiFi network if possible")
+		default:
+			break
+		}
 	}
 
 	// MARK: - Configure Login Screen
