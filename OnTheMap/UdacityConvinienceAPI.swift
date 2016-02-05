@@ -8,8 +8,9 @@
 
 import Foundation
 
+// MARK: Extension HTTPClient. Udacity convinience.
 extension HTTPClient {
-	// Here we return userId or throw error. Handler set to provide correct response Type to responder
+	// Here we return userId or throw error. Handler set to provide correct response Type
 	func sendAuthentictionRequest(user: LoginUser, handler: (() throws -> String) -> Void) {
 		guard let email = user.email, password = user.password else { return }
 		let httpBody = ["udacity":["username" : email, "password" : password]]
@@ -38,7 +39,8 @@ extension HTTPClient {
 			}
 		}
 	}
-	// Here we return userInformation or throw error. Handler set to provide correct response Type to responder
+	
+	// Here we return userInformation or throw an error. Handler set to provide correct response Type 
 	func getPublicUserData(userId: String, handler: (() throws -> UserInformation) -> Void) {
 		sendRequest(UdacityHTTP.GET(userId).request) { response in
 			do {
@@ -65,6 +67,7 @@ extension HTTPClient {
 		}
 	}
 	
+	// Send request to end current session.
 	func endCurrentSession(handler: CompletionHandler) {
 		sendRequest(UdacityHTTP.DELETE.request) { response in
 			do {

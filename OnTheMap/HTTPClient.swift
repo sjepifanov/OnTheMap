@@ -9,14 +9,21 @@
 import Foundation
 import SystemConfiguration
 
+// The idea for HTTPClient is taken from http://swiftandpainless.com/another-approach-to-stubbing-nsurlsession-with-dependency-injection/
+// Properties are not made public though as I haven't started with unit testing yet.
+// But approach seems good enough to implement and used with testin later on.
+
+// Make a protocol for URLSession with exact method from NSURLSession
 protocol URLSession {
 	func dataTaskWithRequest(request: NSURLRequest,
 		completionHandler: (NSData?, NSURLResponse?, NSError?) -> Void
 		) -> NSURLSessionDataTask
 }
-
+// Make NSURLSession conform to our custom protocol
 extension NSURLSession: URLSession {}
 
+// Create a class with either private let set through initializer or var
+// to inject the mock session for testing
 class HTTPClient {
 	// Idea taken from http://appventure.me/2015/06/19/swift-try-catch-asynchronous-closures/
 	// For asyncronus function be able to throw we encapsulating the error into a throwable closure
@@ -30,18 +37,8 @@ class HTTPClient {
 	var session: URLSession = NSURLSession.sharedSession()
 }
 
-/**
-Wrap Error Message to NSError
-
-ex: WrapError.UserInfo(description: description, failureReason: failureReason, code: code).wrappedNSError
-
-- parameters:
-	- description: String
-	- failureReason: String
-	- code: int
-- returns:
-	NSError
-*/
+// Wrap Error Message to NSError
+// ex: WrapError.UserInfo(description: description, failureReason: failureReason, code: code).wrappedNSError
 enum WrapError {
 	case UserInfo(description: String, failureReason: String, code: Int)
 	
@@ -57,10 +54,8 @@ enum WrapError {
 	}
 }
 
-// MARK: - Extension Send Request
-
+// MARK: - HTTPClient Extension. sendRequest()
 extension HTTPClient {
-	
 	func sendRequest(request: (data: NSURLRequest, api: String), handler: CompletionHandler) {
 		let task = session.dataTaskWithRequest(request.data) { data, response, error in
 			guard let data = data
@@ -105,7 +100,6 @@ extension HTTPClient {
 }
 
 // MARK: - Extension Network Connection Check
-
 // Taken from Mastering Swift 2.0 book - https://www.packtpub.com/application-development/mastering-swift-2
 extension HTTPClient {
 	// Check Network Connection

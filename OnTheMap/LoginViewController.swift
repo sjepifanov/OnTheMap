@@ -79,6 +79,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderD
 		LoginProvider.Connect.delegate = self
 		let loginUser = LoginUser(email: emailTextField.text, password: passwordTextField.text)
 		let provider = LoginProvider.Email(loginUser)
+		// Made request here and wait for the anser in delegate method
 		provider.login()
 	}
 
@@ -88,12 +89,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate, LoginProviderD
 
 	// MARK: - Login Provider Delegate
 	func loginProvider(loginProvider: LoginProvider, didSucceed: Bool) {
+		// When login is succeed proceed to tab bar controller
 		activityIndicator.stopAnimating()
 		loginButton.enabled = true
 		showMapViewController()
 	}
 	
 	func loginProvider(loginProvider: LoginProvider, didError error: NSError) {
+		// If login fails present Alert to the user
 		activityIndicator.stopAnimating()
 		loginButton.enabled = true
 		showAlert(error.localizedDescription)

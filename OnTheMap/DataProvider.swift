@@ -136,6 +136,7 @@ extension DataProvider {
 	// Prepare current User data with location and mediaURL provided and send the post request
 	func postData() {
 		guard let client = Connect.client, delegate = Connect.delegate else { return }
+		
 		switch self {
 		case .UserData:
 			guard let
